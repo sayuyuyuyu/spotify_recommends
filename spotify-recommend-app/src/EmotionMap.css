@@ -1,0 +1,19 @@
+#emotion-map {
+    width: 500px; /* 任意のサイズに調節可能 */
+    height: 300px; /* 任意のサイズに調節可能 */
+    border: 1px solid #000;
+    position: relative;
+  }
+  
+  #point {
+    position: absolute;
+    width: 10px; /* 点のサイズ */
+    height: 10px; /* 点のサイズ */
+    background: red;
+    border-radius: 50%;
+    cursor: pointer;
+    /* 初期位置をグラフの中心にセット */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
