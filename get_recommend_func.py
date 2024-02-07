@@ -61,13 +61,17 @@ def get_top_artist():
 #アーティスト名を検索
 def search_artist():
     artist_name = input("アーティスト名を入力してください: ")
-    result = sp.search(q='artist:' + artist_name, type='artist')
+    result = sp.search(q='artist:' + artist_name, type='artist', limit=10)
     try:
-        artist = result['artists']['items'][0]
-        print(f"アーティスト名: {artist['name']}")
+        artists = result['artists']['items']
+        for i, artist in enumerate(artists):
+            print(f"{i+1}. アーティスト名: {artist['name']}")
+        artist_number = int(input("上記のアーティストの中から選んでください（番号）: "))
+        selected_artist = artists[artist_number-1]
+        return {'name': selected_artist['name'], 'id': selected_artist['id']}
     except IndexError:
         print("アーティストが見つかりませんでした")
-    return artist
+        return {'name': None, 'id': None}
 
 #曲名を検索
 def search_song():
@@ -86,8 +90,11 @@ def search_song():
 
 #ジャンルを検索
 def search_genres():
-    genre_name = input("ジャンル名を入力してください: ")
     result = sp.recommendation_genre_seeds()
+    print("--<ジャンル一覧>--------------------------")
+    print(result)
+    print("-----------------------------------------")
+    genre_name = input("ジャンル名を入力してください: ")
     try:
         genres = result['genres']
         if genre_name in genres:
@@ -98,16 +105,29 @@ def search_genres():
         print("エラーが発生しました")
     return genre_name
 
-def hoge(genres, artists, tracks, features):
+def hoge(genres=None, artists=None, tracks=None):
 
     # 内部パラメータをバラバラに
-
     query = {}
 
-    res = sp.recommendations(
-        seed_genres=genres, seed_artist=artists, seed_tracks=tracks, limit=20)
+    if genres:
+        query['seed_genres'] = genres.split(',') if isinstance(genres, str) else genres
+    if artists:
+        query['seed_artists'] = artists.split(',') if isinstance(artists, str) else artists
+    if tracks:
+        query['seed_tracks'] = tracks.split(',') if isinstance(tracks, str) else tracks
 
-    return artists
+    try:
+        res = sp.recommendations(**query, limit=5)
+
+        # レコメンド曲を表示
+        for i, track in enumerate(res['tracks']):
+            print(f"{i+1}. 曲名: {track['name']}, アーティスト: {track['artists'][0]['name']}")
+
+    except:
+        print("何も見つかりませんでした。")
+        res = None
+    return res
 
 def menu():
     options = {
@@ -115,7 +135,7 @@ def menu():
         '2': {'function': search_song, 'name': '曲名検索'},
         '3': {'function': search_genres, 'name': 'ジャンル検索'}
     }
-    results = []
+    results = {'genres': None, 'artists': None, 'tracks': None}
     while options:
         print("選択肢:")
         for key, value in options.items():
@@ -123,18 +143,23 @@ def menu():
         choice = input("選択してください: ")
         if choice in options:
             result = options[choice]['function']()
-            results.append(result)
+            if choice == '1':
+                results['artists'] = result['id'] if result['id'] is not None else None
+            elif choice == '2':
+                results['tracks'] = result['id'] if result['id'] is not None else None
+            elif choice == '3':
+                results['genres'] = result if result is not None else None
             del options[choice]
             if options:
-                print("他の条件で検索しますか？")
-                yn = input("1: はい, 2: いいえ")
+                print("他の条件で検索しますか？(1: はい, 2: いいえ)")
+                yn = input("数字を入力してください: ")
                 if yn == '2':
                     break
         else:
             print("無効な選択です。もう一度選択してください。")
+    
     print("検索結果:")
-    for result in results:
-        print(result)
+    hoge(genres=str(results['genres']), artists=str(results['artists']), tracks=str(results['tracks']))
 
 if __name__ == '__main__':
     menu()
