@@ -8,9 +8,10 @@ from langchain.schema.messages import (
 )
 
 from search_title import SpotifyTool
+from search_artisit import SearchArtistTool
 
 content = """
-SpotifyToolの戻り値のパラメータの説明:
+SpotifyTool、SearchArtistToolの戻り値のパラメータの説明:
 {
     "acousticness": {
         "description": "Confidence measure of whether the track is acoustic.",
@@ -86,7 +87,8 @@ SpotifyToolの戻り値のパラメータの説明:
 llm = ChatOpenAI(temperature=0)
 
 tools = [
-    SpotifyTool()
+    SpotifyTool(),
+    SearchArtistTool()
 ]
 
 from langchain.prompts import MessagesPlaceholder
