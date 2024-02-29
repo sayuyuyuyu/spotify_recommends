@@ -9,8 +9,19 @@ from langchain.schema.messages import (
 
 from search_title import SpotifyTool
 from search_artisit import SearchArtistTool
+from search_recommend import SearchRecommendTool
 
 content = """
+あなたについて:
+あなたはツールとして定義されたspotifyのAPIを操作してUserの要望に答えるAI Agentです。
+
+実行について:
+あなたはUserの入力に対して、Tool を使った実行計画を立ててレビューを求めてから実行してください
+
+注意事項:
+SearchRecommendToolはSpotifyToolとSearchArtistToolの両方を利用した後にのみ使うことが出来ます。
+もし使っていない場合は、Userに該当ツールを使うように促してください。
+
 SpotifyTool、SearchArtistToolの戻り値のパラメータの説明:
 {
     "acousticness": {
@@ -88,7 +99,8 @@ llm = ChatOpenAI(temperature=0)
 
 tools = [
     SpotifyTool(),
-    SearchArtistTool()
+    SearchArtistTool(),
+    SearchRecommendTool()
 ]
 
 from langchain.prompts import MessagesPlaceholder

@@ -20,25 +20,25 @@ class SpotifyTool(BaseTool):
         sp = spotipy.Spotify(auth=token)
         title_name = args
         # result = sp.current_user_saved_tracks(limit=50)
-        result = sp.search(q='track:' + str(title_name), type='track', limit=10)
+        result = sp.search(q='track:' + str(title_name), type='track', limit=1)
 
         # 仮定: result['tracks']['items'] はトラックのリスト
         tracks = [item['id'] for item in result['tracks']['items']]
-        # 各トラックのオーディオ特性を取得
-        audio_features_list = [sp.audio_features(track)[0] for track in tracks]
+        # # 各トラックのオーディオ特性を取得
+        # audio_features_list = [sp.audio_features(track)[0] for track in tracks]
 
-        # uriとtrack_hrefを削除
-        for features in audio_features_list:
-            if 'uri' in features:
-                del features['uri']
-            if 'track_href' in features:
-                del features['track_href']
-            if 'analysis_url' in features:
-                del features['analysis_url']
+        # # uriとtrack_hrefを削除
+        # for features in audio_features_list:
+        #     if 'uri' in features:
+        #         del features['uri']
+        #     if 'track_href' in features:
+        #         del features['track_href']
+        #     if 'analysis_url' in features:
+        #         del features['analysis_url']
 
         # JSON形式に変換
-        audio_features_json = json.dumps(audio_features_list)
-        return audio_features_json
+        audio_features_json = json.dumps(tracks)
+        return "track_id:" + tracks[0]
 
     async def _arun(self, *args, **kwargs) -> str:
         """Use the SpotifyTool asynchronously."""
