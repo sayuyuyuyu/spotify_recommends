@@ -62,5 +62,5 @@ setup_and_retrieval = RunnableParallel(
 chain = setup_and_retrieval | prompt | llm | output_parser
 
 # チェインを起動して、回答をストリーミング出力
-for s in chain.stream("自然を感じられる曲をa3曲お勧めしてください"):
+for s in chain.stream("自然を感じられる曲を3曲お勧めしてください"):
     print(s, end="", flush=True)

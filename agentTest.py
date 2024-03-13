@@ -1,7 +1,7 @@
 from langchain.agents import initialize_agent, Tool
-from langchain.agents import AgentType, OpenAIFunctionsAgent
 from langchain_openai import ChatOpenAI
 from langchain.memory import ConversationBufferMemory
+from langchain.agents import create_openai_functions_agent
 
 from langchain.schema.messages import (
     SystemMessage,
@@ -113,6 +113,7 @@ agent_kwargs = {
 memory = ConversationBufferMemory(memory_key="memory", return_messages=True)
 mrkl = initialize_agent(tools, llm, agent=AgentType.OPENAI_FUNCTIONS, agent_kwargs=agent_kwargs, memory=memory, verbose=True)
 
+agent = create_openai_functions_agent(llm, tools, prompt)
 # 会話ループ
 user = ""
 while user != "exit":
