@@ -2,7 +2,7 @@ import json
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 import os
-import getFeatureCSV as gf
+import src.spotipy_test.getFeatureCSV as gf
 import settings
 import pprint as pprint
 import pandas as pd

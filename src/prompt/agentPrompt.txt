@@ -1,17 +1,3 @@
-from langchain.agents import initialize_agent, Tool
-from langchain_openai import ChatOpenAI
-from langchain.memory import ConversationBufferMemory
-from langchain.agents import create_openai_functions_agent
-
-from langchain.schema.messages import (
-    SystemMessage,
-)
-
-from search_title import SpotifyTool
-from search_artisit import SearchArtistTool
-from search_recommend import SearchRecommendTool
-
-content = """
 あなたについて:
 あなたはツールとして定義されたspotifyのAPIを操作してUserの要望に答えるAI Agentです。
 
@@ -92,32 +78,3 @@ SpotifyTool、SearchArtistToolの戻り値のパラメータの説明:
 
 
 出力の形式:https://open.spotify.com/track/{id}
-
-"""
-
-llm = ChatOpenAI(temperature=0)
-
-tools = [
-    SpotifyTool(),
-    SearchArtistTool(),
-    SearchRecommendTool()
-]
-
-from langchain.prompts import MessagesPlaceholder
-agent_kwargs = {
-    "extra_prompt_messages": [MessagesPlaceholder(variable_name="memory")],
-    "system_message": SystemMessage(
-            content= content
-        ),
-}
-memory = ConversationBufferMemory(memory_key="memory", return_messages=True)
-mrkl = initialize_agent(tools, llm, agent=AgentType.OPENAI_FUNCTIONS, agent_kwargs=agent_kwargs, memory=memory, verbose=True)
-
-agent = create_openai_functions_agent(llm, tools, prompt)
-# 会話ループ
-user = ""
-while user != "exit":
-    user = input("入力してください:")
-    print(user)
-    ai = mrkl.invoke(input=user)
-    print(ai)
